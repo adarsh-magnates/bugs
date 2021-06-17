@@ -1,88 +1,62 @@
 <template>
-  <div>
+ <div>
     <b-container class="bv-example-row">
       <b-row>
         <b-col></b-col>
-   <b-col>
- <div class="hello">
-    <b-card-text>
-      <h3>Form</h3>
-     
-    </b-card-text>
-     <div>
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-      <b-form-group
-        id="input-group-1"
-        label="Email address:"
-        label-for="input-1"
-  
-      >
-        <b-form-input
-          id="input-1"
-          v-model="form.email"
-          type="email"
-          placeholder="Enter email"
-          
-        ></b-form-input>
-         
-       <span>{{errorEmail[0]}}</span>
-      </b-form-group>
-     
-
-      <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="form.name"
-          placeholder="Enter name"
-         
-        ></b-form-input>
-      </b-form-group>
-       <span>{{errorName[0]}}</span>
-
-    <b-form @submit.stop.prevent>
-    <label for="text-password">Password</label>
-    <b-form-input type="password" id="text-password" aria-describedby="password-help-block"  v-model="form.password"  placeholder="Enter Password"></b-form-input>
-    <b-form-text id="password-help-block">
-      <!-- Your password must be 8-20 characters long, contain letters and numbers. -->
-        <span>{{errorPassword[0]}}</span>
-    </b-form-text>
-   </b-form>
-
-      <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
-        <b-form-checkbox-group
-          v-model="form.checked"
-          id="checkboxes-4"
-          :aria-describedby="ariaDescribedby"
-        >
-          <b-form-checkbox value="me">Terms and condtions</b-form-checkbox>
-          <!-- <b-form-checkbox value="that">Check that out</b-form-checkbox> -->
-           <span>{{errorChecked[0]}}</span>
-        </b-form-checkbox-group>
-      </b-form-group>
-
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-button type="reset" variant="danger">Reset</b-button>
-    </b-form>
-    <!-- <span v-if="error.length">
-       <ul>
-         <li id="msg" v-for="msg in error" :key="msg.id">
-                {{msg}}
-         </li>
-       </ul> 
-       
-       </span>   -->
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
-    </b-card>
-  </div>
-  </div>
-
-
-
-
-   </b-col>
-
-            
+      <b-col>
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 offset-sm-2">
+                    <div>
+                        <h2>Form</h2>
+                        <form @submit.prevent="handleSubmit">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" v-model="user.firstName" id="firstName" name="firstName" class="form-control" :class="{ 'is-invalid': submitted && $v.user.firstName.$error }" />
+                                <div v-if="submitted && !$v.user.firstName.required" class="invalid-feedback">First Name is required</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" v-model="user.lastName" id="lastName" name="lastName" class="form-control" :class="{ 'is-invalid': submitted && $v.user.lastName.$error }" />
+                                <div v-if="submitted && !$v.user.lastName.required" class="invalid-feedback">Last Name is required</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" v-model="user.email" id="email" name="email" class="form-control" :class="{ 'is-invalid': submitted && $v.user.email.$error }" />
+                                <div v-if="submitted && $v.user.email.$error" class="invalid-feedback">
+                                    <span v-if="!$v.user.email.required">Email is required</span>
+                                    <span v-if="!$v.user.email.email">Email is invalid</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" v-model="user.password" id="password" name="password" class="form-control" :class="{ 'is-invalid': submitted && $v.user.password.$error }" />
+                                <div v-if="submitted && $v.user.password.$error" class="invalid-feedback">
+                                    <span v-if="!$v.user.password.required">Password is required</span>
+                                    <span v-if="!$v.user.password.minLength">Password must be at least 6 characters</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" v-model="user.confirmPassword" id="confirmPassword" name="confirmPassword" class="form-control" :class="{ 'is-invalid': submitted && $v.user.confirmPassword.$error }" />
+                                <div v-if="submitted && $v.user.confirmPassword.$error" class="invalid-feedback">
+                                    <span v-if="!$v.user.confirmPassword.required">Confirm Password is required</span>
+                                    <span v-else-if="!$v.user.confirmPassword.sameAsPassword">Passwords must match</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary">Register</button>
+                               
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     </b-col>
         <b-col></b-col>
       </b-row>
     </b-container>
@@ -90,84 +64,47 @@
 </template>
 
 <script>
-  export default {
-    name: 'Form',
-     data() {
-      return {
-        form: {
-          email: '',
-          name: '',
-          password: null,
-          checked: []
+    import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
+
+    export default {
+        name: "app",
+        data() {
+            return {
+                user: {
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
+                },
+                submitted: false,
+                 show: true,
+            };
         },
-  
-     errorEmail:[],
-      errorName:[],
-       errorPassword:[],
-        errorChecked:[],
-        show: true
-      }
-    },
-    methods: {
-      onSubmit(event) {
-        event.preventDefault()
-      //  console.log(this.form.email)
-       // alert(JSON.stringify(this.form));
-      
+        validations: {
+            user: {
+                firstName: { required },
+                lastName: { required },
+                email: { required, email },
+                password: { required, minLength: minLength(6) },
+                confirmPassword: { required, sameAsPassword: sameAs('password') }
+            }
+        },
+        methods: {
+            handleSubmit() {
+                this.submitted = true;
 
-        this.error=[];
-         if(!this.form.email){
-              this.errorEmail.push("**please enter your email");
-       }
-       
-        if(!this.form.name){
-           this.errorName.push("**please enter your name");
-       }
-     
-       if(!this.form.password){     
-                this.errorPassword.push("**please enter your password");
-       }  if(this.form.checked==0){
-                this.errorChecked.push("**please check the terns and condition");
-       }
-    
-      //console.warn("error"+this.error)
-       
-      },
-      onReset(event) {
-        event.preventDefault()
-        // Reset our form values
-        this.form.email = ''
-        this.form.name = ''
-        this.form.password = null
-        this.form.checked = []
-        // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
-      }
+                // stop here if form is invalid
+                this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
 
-     
-    },
-   // mounted(){
-  //  this.errorEmail.length==0;
-  //  this.errorName.length==0;
-  //  this.errorPassword.length==0;
-  //  this.errorChecked.length==0;
-  //  console.log(this.errorChecked.length)
-    // }
-  
-  
-  }
+                alert("SUCCESS!! :-)\n\n" + JSON.stringify(this.user));
+                //database call
+            },
+           
+        },
+        
+    };
 </script>
-
-<style >
-span{
-  text-align: center;
-  font-size: 12px;
-  font-style: italic;
-  text-decoration: none;
-  list-style-type: none;
-  color:red;
-}
-</style>

@@ -4,11 +4,16 @@ import Router from 'vue-router';
 import Profile from '@/components/Profile';
 import Form from '@/components/Form';
 import List from '@/components/List';
-import { BootstrapVue } from 'bootstrap-vue';
+import { BootstrapVue } from 'bootstrap-vue'
+
+// Import Bootstrap an BootstrapVue CSS files (order is important)
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import Vuelidate from 'vuelidate';
 
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+Vue.use(Vuelidate);
 Vue.use(Router);
 Vue.use(BootstrapVue);
 

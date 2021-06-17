@@ -14,21 +14,28 @@
             class="mb-2"
           >
             <b-card-text>
-              desgination:{{userProfileDetails.desgination}}
-              <br>
-              college:{{userProfileDetails.college}}
-               <br>
-              year:{{userProfileDetails.year}}
-               <br>
-              session:{{userProfileDetails.session}}
-               <br>
-              rank:{{userProfileDetails.rank}}
+             
             </b-card-text>
 
             <!-- <b-button href="#" variant="primary">Go somewhere</b-button> -->
           </b-card>
         </b-col>
-        <b-col></b-col>
+        <b-col>
+             <b-card-text>
+              desgination:{{userProfileDetails.desgination}}
+              <br>
+              <br>
+             <div> college:{{userProfileDetails.college}}</div>
+               <br>
+              <div> year:{{userProfileDetails.year}}</div>
+               <br>
+             <div>  session:{{userProfileDetails.session}}</div>
+               <br>
+             <div>  rank:{{userProfileDetails.rank}}</div>
+            </b-card-text> 
+
+             
+        </b-col>
       </b-row>
     </b-container>
   </div>
